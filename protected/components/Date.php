@@ -119,12 +119,59 @@ class Date extends CComponent{
        //explode the date by "-" and storing to array
        $datePartsBegin  = explode("-", date("Y-m-d", strtotime($beginDate)));
        $datePartsEnd    = explode("-", date("Y-m-d", strtotime($endDate)));
-       
+
        //gregoriantojd() Converts a Gregorian date to Julian Day Count
        $startDate   = gregoriantojd($datePartsBegin[1], $datePartsBegin[2], $datePartsBegin[0]);
        $endDate     = gregoriantojd($datePartsEnd[1], $datePartsEnd[2], $datePartsEnd[0]);
-       
+
        return $endDate - $startDate;
+    }
+    /**
+     * Method to apply a day offset to a date passed
+     * @param string $baseDate The date to which to apply the offset
+     * @param integer $offset The offset to apply
+     * @return string The date with the offset applied
+     */
+    public function applyOffset(
+        $baseDate,
+        $offset
+    ) {
+        //explode the date by "-" and storing to array
+        $datePartsBase  = explode("-", date("Y-m-d", strtotime($baseDate)));
+
+        //gregoriantojd() Converts a Gregorian date to Julian Day Count
+        $startDate   = gregoriantojd(
+            $datePartsBase[1],
+            $datePartsBase[2],
+            $datePartsBase[0]
+        );
+
+        $appliedDate = $startDate + $offset;
+
+        $appliedDateParts = explode(
+            '/',
+            jdtogregorian(
+                $appliedDate
+            )
+        );
+
+        return gmdate(
+            "Y-m-d",
+            mktime(
+                0,
+                0,
+                0,
+                $appliedDateParts[
+                    0
+                ],
+                $appliedDateParts[
+                    1
+                ],
+                $appliedDateParts[
+                    2
+                ]
+            )
+        );
     }
     /**
      * Method to get number of days in a particular year
